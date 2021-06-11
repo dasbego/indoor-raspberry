@@ -24,7 +24,9 @@ The project contains the following components:
    It is a Node.js project by itself. Created by default when using `$ firebase init`
    Same functionality as API but rewritten with NodeJS in order to deploy the functions to firebase, making the API available on the cloud instead of depending on the Raspberry to be always turned on. This makes data available to every web and mobile applications we may have.
 
-## Hardware
+## Requirements
+
+### Hardware
 
 - Raspberry Pi 3+
 - Arduino Uno
@@ -33,7 +35,7 @@ The project contains the following components:
 - 1x DHT11 Temperature and humidity sensor
 - 1x Protoboard
 
-## Requirements
+### Software
 
 - Firebase Toolkit: CLI, firebase-tools
 - Python3 - For Raspberry sensors reader and running the Flask API
@@ -47,7 +49,7 @@ The project contains the following components:
 1. Create a Firebase account and a project.
    Setup the Firebase database and configure this project to work with it. You can change this config at two different places dependin on the API solution you choose:
    - Firebase Functions: `functions/src/index.ts`
-   - Python API: `raspberry.py`
+   - Python API: `firebase.py`
 2. Test the whole setup with a keyboard, mouse and Monitor attached to the Raspberry before moving it inside the tent and make sure it works with all the components integrated (hardware, software and cloud software)
 
 Extra) Setup the raspberry to be accessed through SSH. This way you can work with it remotely.

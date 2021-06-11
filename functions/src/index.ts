@@ -47,15 +47,17 @@ app.get('/records', async (req: any, res: any) => {
 })
 
 app.post('/records', async (req: any, res: any) => {
-    const new_plant = req.params;
+    const new_plant = req.body;
     if (new_plant) {
         try {
             // save to db
+            await db.ref().child('records').set(new_plant)
         } catch(e) {
             return res.status(500).json({ message: 'Error de Firebase mientras se guardaban registros en Records' })
         }
+        return res.status(200).json({ new_plant })
     } else {
-        return res.status(400).json
+        return res.status(400).json({ message: 'No se encontraron records' })
     }
 })
 

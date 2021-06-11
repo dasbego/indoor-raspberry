@@ -1,4 +1,4 @@
-#Indoor Plant project
+# Indoor Plant project
 
 This is an indoor plant tent project that aims to monitor and control (in the future) hardware assets in the tent configuration.
 The scope for now has been to integrate sensors to keep track of the environment and capture data for future possible web and mobile clients.

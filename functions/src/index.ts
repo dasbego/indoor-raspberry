@@ -1,6 +1,6 @@
-const functions = require('firebase-functions');
-const express = require('express');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions");
+const express = require("express");
+const admin = require("firebase-admin");
 
 const service_credentials = {
     "type": "",
@@ -21,44 +21,48 @@ const app = express();
 console.log(__dirname)
 // initialize db
 admin.initializeApp({
-  credential: admin.credential.cert(service_credentials),
+  credential: admin.credential.cert(serviceCredentials),
   databaseURL: "https://indoorv2-default-rtdb.firebaseio.com"
 });
 const db = admin.database();
 
-app.get('/', (req: any, res: any) => {
-    return res.status(200).json({ message: 'API de Indoor House' });
+app.get("/", (req: any, res: any) => {
+  return res.status(200).json({ message: "API de Indoor House" });
 })
-app.get('/plants', async (req: any, res: any) => {
-    const plants = await db.ref().child('plants').get();
-    if (plants) {
-        return res.status(200).json({ plants: plants })
-    } else {
-        return res.status(404).json({ message: 'No se encontró ningun registro de plantas' })
-    }
+app.get("/plants", async (req: any, res: any) => {
+  const plants = await db.ref().child("plants").get();
+  if (plants) {
+    return res.status(200).json({ plants: plants })
+  } else {
+    return res.status(404).json({
+      message: "No se encontró ningun registro de plantas"
+    })
+  }
 })
-app.get('/records', async (req: any, res: any) => {
-    const records = await db.ref().child('records').get();
-    if (records) {
-        return res.status(200).json({ records: records })
-    } else {
-        return res.status(404).json({ message: 'No se encontró ningun registro' })
-    }
-})
-
-app.post('/records', async (req: any, res: any) => {
-    const new_plant = req.body;
-    if (new_plant) {
-        try {
-            // save to db
-            await db.ref().child('records').set(new_plant)
-        } catch(e) {
-            return res.status(500).json({ message: 'Error de Firebase mientras se guardaban registros en Records' })
-        }
-        return res.status(200).json({ new_plant })
-    } else {
-        return res.status(400).json({ message: 'No se encontraron records' })
-    }
+app.get("/records", async (req: any, res: any) => {
+  const records = await db.ref().child("records").get();
+  if (records) {
+    return res.status(200).json({ records: records })
+  } else {
+    return res.status(404).json({ message: "No se encontró ningun registro" })
+  }
 })
 
-exports.app = functions.https.onRequest(app);
+app.post("/records", async (req: any, res: any) => {
+  const newPlant = req.body;
+  if (newPlant) {
+    try {
+      // save to db
+      await db.ref().child("records").push(newPlant)
+    } catch (e) {
+      return res.status(500).json({
+        message: "Error de Firebase mientras se guardaban registros en Records"
+      })
+    }
+    return res.status(200).json({ newPlant })
+  } else {
+    return res.status(400).json({ message: "No se encontraron records" })
+  }
+})
+
+exports.indoorapi = functions.https.onRequest(app);

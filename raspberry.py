@@ -4,6 +4,7 @@ import Adafruit_DHT
 import firebase
 import time
 from uuid import uuid4
+import datetime
 
 # Parse command line parameters.
 sensor_args = { '11': Adafruit_DHT.DHT11,
@@ -41,7 +42,8 @@ def parseSerialStream(stream):
                     }
                 if ('Humidity' in prop):
                     if (len(targetid) == 0):
-                        targetid = ''
+                        targetid = 'unknown'
+                        parsedRecords[targetid]["name"] = targetid
                     if (len(targetid) and parsedRecords[targetid] is not None):
                         humidity_raw = int(prop.split(':')[1].strip())
                         parsedRecords[targetid] = {
@@ -50,7 +52,14 @@ def parseSerialStream(stream):
                                     'percentage': 100 - map(humidity_raw, 0, 1024, 0, 100)
                                 }
                         }
+            if (targetid):
+                parsedRecords[targetid]["timestamp"] = get_timestamp()
     return parsedRecords
+
+def get_timestamp():
+    ts = time.time()
+    dtt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M%S')
+    return dtt
 
 time1 = time.time()
 saveToDB = False
@@ -72,22 +81,25 @@ while True:
     # guarantee the timing of calls to read the sensor).
     # If this happens try again!
     if humidity is not None and temperature is not None:
+        timestamp = get_timestamp()
         dht11_record = {
             'name': 'DHT11',
             'temperature': temperature,
+            "timestamp": timestamp,
             'humidity': {
                 'raw': humidity,
                 'percentage': humidity
             }
         }
         latest_records['DHT11'] = dht11_record
-        print('Temp:{0:0.1f}° | Humidity={1:0.1f}%'.format(temperature, humidity))
+        # print('Temp:{0:0.1f}° | Humidity={1:0.1f}%'.format(temperature, humidity))
     else:
         print('Error: Failed to get reading.')
     val = arduino.readline()
     records = parseSerialStream(val)
     if (saveToDB):
-        print("Saving records to DB...", records)
+        # flush last saved record to Firebase db
+        # print("Saving records to DB...", records)
         for x in latest_records:
             db.child('records').push(latest_records[x])
         saveToDB = False
@@ -96,6 +108,6 @@ while True:
         # update latest saved items
         for x in records:
             latest_records[x] = records[x]
-    print(records)
+    # print(records)
 
 

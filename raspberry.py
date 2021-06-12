@@ -17,7 +17,7 @@ pin = 4
 
 # database connection to firebase
 # This is a timeframe that defines how often to save to db. Default 10 min
-db_timeframe = 1 * 5
+db_timeframe = 10 * 60
 db = firebase.get_connection()
 
 def map (x, in_min, in_max, out_min, out_max):
@@ -42,15 +42,15 @@ def parseSerialStream(stream):
                     }
                 if ('Humidity' in prop):
                     if (len(targetid) == 0):
-                        targetid = 'unknown'
+                        targetid = "Unknown plant"
+                        print(prop)
+                        parsedRecords[targetid] = {}
                         parsedRecords[targetid]["name"] = targetid
                     if (len(targetid) and parsedRecords[targetid] is not None):
                         humidity_raw = int(prop.split(':')[1].strip())
-                        parsedRecords[targetid] = {
-                                'humidity': {
-                                    'raw': humidity_raw,
-                                    'percentage': 100 - map(humidity_raw, 0, 1024, 0, 100)
-                                }
+                        parsedRecords[targetid]['humidity'] = {
+                                'raw': humidity_raw,
+                                'percentage': 100 - map(humidity_raw, 0, 1024, 0, 100)
                         }
             if (targetid):
                 parsedRecords[targetid]["timestamp"] = get_timestamp()
@@ -58,7 +58,7 @@ def parseSerialStream(stream):
 
 def get_timestamp():
     ts = time.time()
-    dtt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M%S')
+    dtt = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     return dtt
 
 time1 = time.time()

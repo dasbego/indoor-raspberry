@@ -25,8 +25,9 @@ module.exports = {
     "import"
   ],
   rules: {
-    "quotes": ["error", "double"],
-    "comma-dangle": ["error", "never"],
+    "quotes": [0],
+    "max-len": 0,
+    "comma-dangle": 0,
     "object-curly-spacing": [0],
     "semi": 0,
     "@typescript-eslint/no-explicit-any": 0,
